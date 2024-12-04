@@ -1,0 +1,60 @@
+using System;
+
+class FilmUtility
+{
+    // Method to validate film specifications
+    public static bool ValidateFilmSpecification(string category, double mainActorSalary)
+    {
+        if ((category == "Action" || category == "Drama" || category == "Comedy") && mainActorSalary > 0)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    // Method to calculate production cost
+    public static double CalculateProductionCost(string category, double mainActorSalary)
+    {
+        double categoryCost = 0;
+
+        switch (category)
+        {
+            case "Action":
+                categoryCost = 500000 + (3 * mainActorSalary);
+                break;
+            case "Drama":
+                categoryCost = 300000;
+                break;
+            case "Comedy":
+                categoryCost = 200000;
+                break;
+            default:
+                throw new ArgumentException("Invalid category");
+        }
+
+        return categoryCost;
+    }
+
+    public static void Main(string[] args)
+    {
+        Console.WriteLine("Enter Film Category (Action/Drama/Comedy):");
+        string category = Console.ReadLine();
+
+        Console.WriteLine("Enter Main Actor's Salary:");
+        if (!double.TryParse(Console.ReadLine(), out double mainActorSalary))
+        {
+            Console.WriteLine("Invalid salary input.");
+            return;
+        }
+
+        if (ValidateFilmSpecification(category, mainActorSalary))
+        {
+            double productionCost = CalculateProductionCost(category, mainActorSalary);
+            Console.WriteLine($"Production Cost: {productionCost}");
+        }
+        else
+        {
+            Console.WriteLine("Invalid film specifications");
+        }
+    }
+}
