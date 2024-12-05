@@ -1,0 +1,102 @@
+using System;
+using System.Collections.Generic;
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        // Input data
+        Console.Write("Enter the Order ID: ");
+        string orderId = Console.ReadLine();
+
+        Console.Write("Enter the Customer Name: ");
+        string customerName = Console.ReadLine();
+
+        Console.Write("Enter the Number of Order Items: ");
+        int noOfOrderItems;
+        int.TryParse(Console.ReadLine(), out noOfOrderItems);
+
+        List<string> orderItems = new List<string>();
+        for (int i = 0; i < noOfOrderItems; i++)
+        {
+            Console.Write("Enter the Order Items: ");
+            orderItems.Add(Console.ReadLine());
+        }
+
+        Console.Write("Enter Membership Level (Standard, Premium, Elite): ");
+        string membershipLevel = Console.ReadLine();
+
+        // Validation and Calculation
+        if (ValidateOrder(orderId, customerName, noOfOrderItems, orderItems, membershipLevel))
+        {
+            double totalAmount = CalculateTotal(orderItems, membershipLevel);
+            Console.WriteLine($"Total amount for the order after applying discounts is: ${totalAmount:F2}");
+        }
+        else
+        {
+            Console.WriteLine("Invalid order specifications");
+        }
+    }
+
+    static bool ValidateOrder(string orderId, string customerName, int noOfOrderItems, List<string> orderItems, string membershipLevel)
+    {
+        // Valid items and memberships
+        HashSet<string> validItems = new HashSet<string> { "Tops", "Bottoms", "Dresses", "Shoes", "Watches" };
+        HashSet<string> validMemberships = new HashSet<string> { "Standard", "Premium", "Elite" };
+
+        // Validation criteria
+        if (orderId.Length != 3 || !int.TryParse(orderId, out _))
+            return false;
+
+        if (string.IsNullOrWhiteSpace(customerName))
+            return false;
+
+        if (noOfOrderItems <= 0 || noOfOrderItems > validItems.Count)
+            return false;
+
+        foreach (string item in orderItems)
+        {
+            if (!validItems.Contains(item))
+                return false;
+        }
+
+        if (!validMemberships.Contains(membershipLevel))
+            return false;
+
+        return true;
+    }
+
+    static double CalculateTotal(List<string> orderItems, string membershipLevel)
+    {
+        // Item prices
+        Dictionary<string, double> itemPrices = new Dictionary<string, double>
+        {
+            { "Tops", 50 },
+            { "Bottoms", 70 },
+            { "Bags", 120 },
+            { "Shoes", 80 },
+            { "Watches", 30 }
+        };
+
+        // Membership discounts
+        Dictionary<string, double> membershipDiscounts = new Dictionary<string, double>
+        {
+            { "Standard", 0 },
+            { "Premium", 10 },
+            { "Elite", 20 }
+        };
+
+        // Calculate total price
+        double totalPrice = 0;
+        foreach (string item in orderItems)
+        {
+            if (itemPrices.ContainsKey(item))
+            {
+                totalPrice += itemPrices[item];
+            }
+        }
+
+        double discount = (membershipDiscounts[membershipLevel] / 100) * totalPrice;
+        return totalPrice - discount;
+    }
+}
